@@ -19,6 +19,7 @@
 
 # noinspection PyPackageRequirements
 import wx
+import math
 
 from eos.saveddata.cargo import Cargo
 from eos.saveddata.drone import Drone
@@ -53,23 +54,28 @@ class Price(ViewColumn):
         self.imageId = fittingView.imageList.GetImageIndex("totalPrice_small", "gui")
 
     def getText(self, stuff):
-        if stuff.item is None or stuff.item.group.name == "Ship Modifiers":
-            return ""
-
-        if hasattr(stuff, "isEmpty"):
-            if stuff.isEmpty:
+        if hasattr(stuff, 'item'):
+            if stuff.item is None or stuff.item.group.name == "Ship Modifiers":
                 return ""
 
-        if isinstance(stuff, Module) and stuff.isMutated:
-            return ""
+            if hasattr(stuff, "isEmpty"):
+                if stuff.isEmpty:
+                    return ""
 
-        priceObj = stuff.item.price
+            if isinstance(stuff, Module) and stuff.isMutated:
+                return ""
 
-        if not priceObj.isValid():
-            return False
+            priceObj = stuff.item.price
+
+            if not priceObj.isValid():
+                return False
+        else:
+            priceObj = stuff.price
+
+            if not priceObj.isValid(validityOverride=math.inf):
+                return False
 
         return formatPrice(stuff, priceObj)
-
     def delayedText(self, mod, display, colItem):
         sPrice = ServicePrice.getInstance()
 
