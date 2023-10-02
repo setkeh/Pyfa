@@ -10,6 +10,7 @@ from gui.display import Display
 from gui.utils.staticHelpers import DragDropHelper
 from service.fit import Fit
 from service.market import Market
+from service.price import Price as ServicePrice
 
 
 pyfalog = Logger(__name__)
@@ -229,6 +230,11 @@ class ItemView(Display):
                 items.sort(key=self.sMkt.itemSort)
         # Mark current item list as active
         self.active = items
+        # Fetch item prices if needed before updating panel
+        if any(item.price.isValid() is False for item in items):
+            idList = [item.ID for item in items]
+            sPrice = ServicePrice.getInstance()
+            sPrice.getPrices(idList, None, fetchTimeout=90, waitforthread=False)
         # Show them
         Display.populate(self, items)
 
