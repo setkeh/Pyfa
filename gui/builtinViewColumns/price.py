@@ -85,7 +85,7 @@ class Price(ViewColumn):
 
             display.SetItem(colItem)
 
-        sPrice.getPrices([mod.item], callback, waitforthread=True)
+        sPrice.getPrices([mod.item if hasattr(mod, 'item') else mod], callback, waitforthread=True)
 
     def getImageId(self, mod):
         return -1
