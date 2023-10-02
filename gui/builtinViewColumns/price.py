@@ -55,6 +55,7 @@ class Price(ViewColumn):
 
     def getText(self, stuff):
         if hasattr(stuff, 'item'):
+            override = False
             if stuff.item is None or stuff.item.group.name == "Ship Modifiers":
                 return ""
 
@@ -67,13 +68,13 @@ class Price(ViewColumn):
 
             priceObj = stuff.item.price
 
-            if not priceObj.isValid():
-                return False
         else:
+            # If stuff is already an Item object
+            override = math.inf
             priceObj = stuff.price
 
-            if not priceObj.isValid(validityOverride=math.inf):
-                return False
+        if not priceObj.isValid(validityOverride=override):
+            return False
 
         return formatPrice(stuff, priceObj)
     def delayedText(self, mod, display, colItem):
